@@ -1,0 +1,35 @@
+name: PR Review Agent CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Syntax check
+        run: |
+          find agents/ tools/ graph/ prompts/ -name "*.py" | xargs python -m py_compile
+
+      - name: Run tests
+        run: |
+          if find evals/ -name "test_*.py" | grep -q .; then
+            pytest evals/
+          else
+            echo "No test files found in evals/ — skipping"
+          fi
