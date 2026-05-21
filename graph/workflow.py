@@ -9,6 +9,12 @@ from agents.critic import critic
 from agents.reporter import reporter, post_to_github
 
 
+def route_after_orchestrator(state: PRReviewState) -> str:
+    if state.get("error") is not None:
+        return "end"
+    return "continue"
+
+
 def build_graph() -> StateGraph:
     graph = StateGraph(PRReviewState)
 
@@ -21,9 +27,14 @@ def build_graph() -> StateGraph:
     graph.add_node("post_to_github", post_to_github)
 
     graph.add_edge(START, "orchestrator")
-    graph.add_edge("orchestrator", "security_agent")
-    graph.add_edge("orchestrator", "performance_agent")
-    graph.add_edge("orchestrator", "style_agent")
+    graph.add_conditional_edges(
+        "orchestrator",
+        route_after_orchestrator,
+        {
+            "end": END,
+            "continue": ["security_agent", "performance_agent", "style_agent"],
+        },
+    )
     graph.add_edge("security_agent", "critic")
     graph.add_edge("performance_agent", "critic")
     graph.add_edge("style_agent", "critic")

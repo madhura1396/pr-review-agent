@@ -8,12 +8,9 @@ The system is orchestrated as a LangGraph state graph:
 
 ```
 orchestrator
-    ├── security_agent   (hardcoded secrets, injection vulnerabilities)
-    ├── performance_agent (O(n²) patterns, N+1 queries, memory issues)
-    └── style_agent      (PEP8, naming, missing docstrings, dead code)
-         └── critic       (deduplicates and prioritizes findings)
-              └── reporter (formats summary report)
-                   └── post_to_github (posts comment to PR)
+    ├── security_agent    (hardcoded secrets, injection vulnerabilities)  ─┐
+    ├── performance_agent (O(n²) patterns, N+1 queries, memory issues)    ─┼─► critic ─► reporter ─► post_to_github
+    └── style_agent       (PEP8, naming, missing docstrings, dead code)   ─┘
 ```
 
 - **Orchestrator** — fetches the PR diff from GitHub and splits it into per-file chunks
