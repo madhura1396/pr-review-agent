@@ -34,7 +34,8 @@ def main():
         "error": None,
     }
 
-    output = graph.invoke(initial_state)
+    config = {"configurable": {"thread_id": pr_url}}
+    output = graph.invoke(initial_state, config=config)
 
     if output.get("error"):
         print(f"Error: {output['error']}")

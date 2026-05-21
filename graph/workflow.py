@@ -1,4 +1,5 @@
 from langgraph.graph import StateGraph, START, END
+from langgraph.checkpoint.memory import MemorySaver
 
 from graph.state import PRReviewState
 from agents.orchestrator import orchestrator
@@ -42,4 +43,4 @@ def build_graph() -> StateGraph:
     graph.add_edge("reporter", "post_to_github")
     graph.add_edge("post_to_github", END)
 
-    return graph.compile()
+    return graph.compile(checkpointer=MemorySaver())
