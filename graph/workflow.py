@@ -1,5 +1,6 @@
 from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.memory import MemorySaver
+from langgraph.types import interrupt
 
 from graph.state import PRReviewState
 from agents.orchestrator import orchestrator
@@ -16,6 +17,21 @@ def route_after_orchestrator(state: PRReviewState) -> str:
     return "continue"
 
 
+def human_approval(state: PRReviewState) -> dict:
+    critical = [f for f in state.get("critic_output", []) if "CRITICAL" in f.upper()]
+    interrupt({
+        "message": "CRITICAL findings require approval before posting.",
+        "findings": critical,
+    })
+    return {}
+
+
+def route_after_critic(state: PRReviewState) -> str:
+    if any("CRITICAL" in f.upper() for f in state.get("critic_output", [])):
+        return "needs_approval"
+    return "proceed"
+
+
 def build_graph() -> StateGraph:
     graph = StateGraph(PRReviewState)
 
@@ -24,6 +40,7 @@ def build_graph() -> StateGraph:
     graph.add_node("performance_agent", performance_agent)
     graph.add_node("style_agent", style_agent)
     graph.add_node("critic", critic)
+    graph.add_node("human_approval", human_approval)
     graph.add_node("reporter", reporter)
     graph.add_node("post_to_github", post_to_github)
 
@@ -39,7 +56,15 @@ def build_graph() -> StateGraph:
     graph.add_edge("security_agent", "critic")
     graph.add_edge("performance_agent", "critic")
     graph.add_edge("style_agent", "critic")
-    graph.add_edge("critic", "reporter")
+    graph.add_conditional_edges(
+        "critic",
+        route_after_critic,
+        {
+            "needs_approval": "human_approval",
+            "proceed": "reporter",
+        },
+    )
+    graph.add_edge("human_approval", "reporter")
     graph.add_edge("reporter", "post_to_github")
     graph.add_edge("post_to_github", END)
 
