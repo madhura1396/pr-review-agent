@@ -1,18 +1,10 @@
-import os
-
 from dotenv import load_dotenv
-from langchain_groq import ChatGroq
 
-from config import GROQ_MODEL
+from config import get_llm
 from graph.state import PRReviewState
 from prompts.agent_prompts import PERFORMANCE_PROMPT
 
 load_dotenv()
-
-_llm = ChatGroq(
-    model=GROQ_MODEL,
-    api_key=os.getenv("GROQ_API_KEY"),
-)
 
 
 def performance_agent(state: PRReviewState) -> dict:
@@ -23,7 +15,7 @@ def performance_agent(state: PRReviewState) -> dict:
     findings = []
     for chunk in chunks:
         prompt = PERFORMANCE_PROMPT.format(diff=f"File: {chunk.filename}\n{chunk.diff}")
-        response = _llm.invoke(prompt).content.strip()
+        response = get_llm().invoke(prompt).content.strip()
         if response != "NO ISSUES FOUND":
             findings.append(response)
 

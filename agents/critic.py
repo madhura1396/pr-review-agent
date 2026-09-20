@@ -1,18 +1,10 @@
-import os
-
 from dotenv import load_dotenv
-from langchain_groq import ChatGroq
 
-from config import GROQ_MODEL
+from config import get_llm
 from graph.state import PRReviewState
 from prompts.agent_prompts import CRITIC_PROMPT
 
 load_dotenv()
-
-_llm = ChatGroq(
-    model=GROQ_MODEL,
-    api_key=os.getenv("GROQ_API_KEY"),
-)
 
 
 def critic(state: PRReviewState) -> dict:
@@ -29,7 +21,7 @@ def critic(state: PRReviewState) -> dict:
         style_findings="\n".join(style),
     )
 
-    response = _llm.invoke(prompt).content.strip()
+    response = get_llm().invoke(prompt).content.strip()
     findings_list = [line for line in response.split("\n") if line.strip()]
 
     return {"critic_output": findings_list}

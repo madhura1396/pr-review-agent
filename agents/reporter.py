@@ -3,18 +3,12 @@ import re
 
 from dotenv import load_dotenv
 from github import Github
-from langchain_groq import ChatGroq
 
-from config import GROQ_MODEL
+from config import get_llm
 from graph.state import PRReviewState
 from prompts.agent_prompts import REPORTER_PROMPT
 
 load_dotenv()
-
-_llm = ChatGroq(
-    model=GROQ_MODEL,
-    api_key=os.getenv("GROQ_API_KEY"),
-)
 
 
 def reporter(state: PRReviewState) -> dict:
@@ -24,7 +18,7 @@ def reporter(state: PRReviewState) -> dict:
         return {"final_report": "No issues found."}
 
     prompt = REPORTER_PROMPT.format(critic_output="\n".join(critic_output))
-    response = _llm.invoke(prompt).content.strip()
+    response = get_llm().invoke(prompt).content.strip()
 
     return {"final_report": response}
 

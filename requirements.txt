@@ -1,8 +1,15 @@
-langgraph
-langchain
-langchain-groq
-langchain-core
-PyGithub
-python-dotenv
+# Versions are pinned to the set this project is known to work on.
+#
+# deepeval 0.21.78 imports `langchain.schema`, which langchain removed in 1.x.
+# Leaving either unpinned lets CI resolve an incompatible pair and fail at
+# import with ModuleNotFoundError, even though nothing in this repo changed.
+# Upgrading deepeval past 0.21.x also moves GEval and assert_test, so the eval
+# harness would need porting alongside it.
+langgraph==0.6.11
+langchain==0.3.30
+langchain-core==0.3.86
+langchain-groq==0.3.8
+PyGithub==2.9.1
+python-dotenv==1.2.1
 deepeval==0.21.78
-pytest
+pytest==8.4.2
