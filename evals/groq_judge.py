@@ -41,7 +41,21 @@ class GroqJudge(DeepEvalBaseLLM):
         if not api_key:
             raise PermissionError("GROQ_API_KEY is not set in environment / .env")
         # temperature=0 so a judge re-run on the same output scores the same way.
-        return ChatGroq(model=self.model_name, api_key=api_key, temperature=0)
+        #
+        # max_tokens matters on Groq's free tier: with no cap, Groq estimates the
+        # request's output at the model default and rejects it outright when that
+        # exceeds the output-tokens-per-minute ceiling ("Request too large ...
+        # OTPM: Limit 1000, Requested 1408"), regardless of actual usage. A
+        # {score, reason} verdict needs a few hundred tokens, so cap it well under.
+        return ChatGroq(
+            model=self.model_name,
+            api_key=api_key,
+            temperature=0,
+            max_tokens=int(os.getenv("EVAL_JUDGE_MAX_TOKENS", "700")),
+            # Groq retries 429s that are genuinely transient (a minute's budget
+            # exhausted by earlier tests) rather than failing the whole suite.
+            max_retries=3,
+        )
 
     def _structured(self, schema: Type[BaseModel]):
         return self.model.with_structured_output(schema, method=self.structured_method)
