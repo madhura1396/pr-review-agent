@@ -4,5 +4,5 @@ langchain-groq
 langchain-core
 PyGithub
 python-dotenv
-deepeval
+deepeval==0.21.78
 pytest
