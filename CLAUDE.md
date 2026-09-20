@@ -14,7 +14,7 @@ Multi-agent PR review system built with LangGraph, LangChain, and Groq.
 ## Stack
 - LangGraph for agent orchestration
 - LangChain (langchain-groq) as LLM wrapper
-- Groq (llama-3.3-70b-versatile) as LLM
+- Groq (openai/gpt-oss-120b) as LLM — model name lives in config.py, override with GROQ_MODEL
 - PyGitHub for GitHub API integration
 - LangSmith for observability and tracing
 - DeepEval for LLM evaluation
@@ -40,6 +40,8 @@ Multi-agent PR review system built with LangGraph, LangChain, and Groq.
 
 ## Environment Variables
 GROQ_API_KEY
+GROQ_MODEL (optional, defaults to openai/gpt-oss-120b)
+EVAL_JUDGE_MODEL (optional, defaults to qwen/qwen3.8-27b — kept distinct from GROQ_MODEL so evals aren't self-graded)
 GITHUB_TOKEN
 LANGSMITH_API_KEY
 LANGSMITH_PROJECT

@@ -5,13 +5,14 @@ from dotenv import load_dotenv
 from github import Github
 from langchain_groq import ChatGroq
 
+from config import GROQ_MODEL
 from graph.state import PRReviewState
 from prompts.agent_prompts import REPORTER_PROMPT
 
 load_dotenv()
 
 _llm = ChatGroq(
-    model="llama-3.3-70b-versatile",
+    model=GROQ_MODEL,
     api_key=os.getenv("GROQ_API_KEY"),
 )
 

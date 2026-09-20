@@ -25,7 +25,7 @@ orchestrator
 |---|---|
 | Agent orchestration | LangGraph |
 | LLM wrapper | LangChain (`langchain-groq`) |
-| LLM | Groq (`llama-3.3-70b-versatile`) |
+| LLM | Groq (`openai/gpt-oss-120b`) |
 | Observability | LangSmith |
 | GitHub API | PyGithub |
 
