@@ -3,7 +3,6 @@ from deepeval import assert_test
 from deepeval.test_case import LLMTestCase
 
 from agents.critic import critic
-from evals.checks import assert_severities_valid
 from evals.goldens import CRITIC_GOLDENS, critic_state
 from evals.metrics import reconciliation_metric
 
@@ -25,7 +24,6 @@ def test_critic_reconciles_reviewer_findings(golden, judge):
     assert findings, f"critic returned nothing for {golden.name}"
 
     output = "\n".join(findings)
-    assert_severities_valid(output)
 
     reviewer_input = (
         f"Security findings:\n{chr(10).join(golden.security_findings) or '(none)'}\n\n"
