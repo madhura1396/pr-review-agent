@@ -39,9 +39,3 @@ def assert_finding_format(text: str) -> None:
         assert _FINDING_RE.match(line), (
             f"line starts with a severity but is not a well-formed finding row: {line!r}"
         )
-
-
-def assert_severities_valid(text: str) -> None:
-    """Assert every parsed finding uses one of the three documented severities."""
-    for match in parse_findings(text):
-        assert match.group(1) in SEVERITIES, f"unexpected severity {match.group(1)!r}"

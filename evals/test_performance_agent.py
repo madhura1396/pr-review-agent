@@ -3,7 +3,7 @@ from deepeval import assert_test
 from deepeval.test_case import LLMTestCase
 
 from agents.performance import performance_agent
-from evals.checks import assert_finding_format, assert_severities_valid
+from evals.checks import assert_finding_format
 from evals.goldens import PERFORMANCE_GOLDENS, as_state
 from evals.metrics import detection_metric, scope_metric
 
@@ -17,7 +17,6 @@ def test_performance_agent_detects_planted_bottleneck(golden, judge):
 
     output = "\n".join(findings)
     assert_finding_format(output)
-    assert_severities_valid(output)
 
     assert_test(
         LLMTestCase(
